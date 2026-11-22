@@ -1,0 +1,9 @@
+name = "tower-bg-website"
+compatibility_date = "2026-11-22"
+pages_build_output_dir = "."
+
+[[d1_databases]]
+binding = "DB"
+database_name = "dassadsad"
+database_id = "bf1d827f-1b15-4f30-b14c-44f9b145b635"
+preview_database_id = "DB"
