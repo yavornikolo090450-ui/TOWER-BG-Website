@@ -14,10 +14,11 @@
     <header class="navbar">
         <a href="#home" class="logo">TOWER <span>BG</span></a>
 
-        <nav>
+        <nav><a href="admin.html">🔐 Администратор</a>
             <a href="#home">Начало</a>
             <a href="#about">За играта</a>
             <a href="#updates">Новини</a>
+            <a href="#leaderboard">Time Board</a>
             <a href="#support">Support</a>
             <a href="#community">Общност</a>
         </nav>
@@ -108,6 +109,37 @@
             </div>
         </div>
     </section>
+
+<!-- TIME BOARD -->
+<section class="leaderboard section" id="leaderboard">
+    <div class="tag">TOWER BG RANKING</div>
+
+    <h2>TIME <span>BOARD</span></h2>
+
+    <p>Най-активните играчи в TOWER BG!</p>
+
+    <div class="leaderboard-container">
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>МЯСТО</th>
+                    <th>ИГРАЧ</th>
+                    <th>ВРЕМЕ В ИГРАТА</th>
+                </tr>
+            </thead>
+
+            <tbody id="leaderboardBody">
+                <tr>
+                    <td colspan="3">Класацията се подготвя...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="small" id="leaderboardUpdated">
+        TOWER BG – PLAYTIME RANKING
+    </p>
+</section>
 
     <!-- SUPPORT -->
     <section class="support section" id="support">
@@ -263,3 +295,4 @@
 
 </body>
 </html>
+
