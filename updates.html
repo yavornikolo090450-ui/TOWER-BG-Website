@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOWER BG | Всички ъпдейти</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #080811;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            padding: 20px 5%;
+            background: #11101c;
+            border-bottom: 1px solid #35234d;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        header span {
+            color: #a36bff;
+        }
+
+        main {
+            max-width: 1000px;
+            width: 92%;
+            margin: 55px auto;
+        }
+
+        .back {
+            color: #b68aff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        h1 {
+            font-size: 38px;
+            margin-top: 30px;
+        }
+
+        h1 span {
+            color: #a36bff;
+        }
+
+        .subtitle {
+            color: #aaa5bb;
+            margin-bottom: 35px;
+        }
+
+        .update-card {
+            background: #141421;
+            border: 1px solid #503475;
+            border-radius: 14px;
+            padding: 25px;
+            margin-bottom: 22px;
+        }
+
+        .update-card h2 {
+            color: #b68aff;
+            margin-top: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .update-description {
+            color: #ded8e9;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            line-height: 1.8;
+        }
+
+        .update-date {
+            color: #9287a4;
+            font-size: 12px;
+            margin-top: 20px;
+            display: block;
+        }
+
+        .media {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .media img,
+        .media video {
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #080811;
+        }
+
+        #updatesList {
+            min-height: 100px;
+        }
+
+        .message {
+            color: #aaa5bb;
+            padding: 20px 0;
+        }
+
+        footer {
+            text-align: center;
+            color: #9287a4;
+            padding: 35px 15px;
+            border-top: 1px solid #35234d;
+            font-size: 12px;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 29px;
+            }
+
+            .update-card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <a href="index.html">TOWER <span>BG</span></a>
+</header>
+
+<main>
+
+    <a href="index.html" class="back">
+        ← Към началната страница
+    </a>
+
+    <h1>ВСИЧКИ <span>ЪПДЕЙТИ</span></h1>
+
+    <p class="subtitle">
+        Всички новини, подобрения и събития в TOWER BG.
+    </p>
+
+    <div id="updatesList" aria-live="polite">
+        <p class="message">Зареждане на ъпдейтите...</p>
+    </div>
+
+</main>
+
+<footer>
+    <p>TOWER BG – OFFICIAL ROBLOX GAME WEBSITE</p>
+    <p>© 2026 TOWER BG. All rights reserved.</p>
+</footer>
+
+<script>
+async function loadAllUpdates() {
+    const container = document.getElementById("updatesList");
+
+    container.textContent = "Зареждане на ъпдейтите...";
+
+    try {
+        const response = await fetch("/api/updates", {
+            cache: "no-store"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "Грешка при зареждането.");
+        }
+
+        container.replaceChildren();
+
+        if (!Array.isArray(data.updates) || data.updates.length === 0) {
+            const empty = document.createElement("p");
+            empty.className = "message";
+            empty.textContent = "Все още няма публикувани ъпдейти.";
+            container.appendChild(empty);
+            return;
+        }
+
+        // Най-новите публикации трябва да са първи.
+        data.updates.forEach(update => {
+            const card = document.createElement("article");
+            card.className = "update-card";
+
+            const title = document.createElement("h2");
+            title.textContent = update.title;
+
+            const description = document.createElement("p");
+            description.className = "update-description";
+            description.textContent = update.description || "";
+
+            const mediaContainer = document.createElement("div");
+            mediaContainer.className = "media";
+
+            if (update.image_url) {
+                const image = document.createElement("img");
+                image.src = update.image_url;
+                image.alt = update.title;
+                image.loading = "lazy";
+                mediaContainer.appendChild(image);
+            }
+
+            if (Array.isArray(update.media)) {
+                update.media.forEach(file => {
+                    let element;
+
+                    if (file.type?.startsWith("image/")) {
+                        element = document.createElement("img");
+                        element.alt = update.title;
+                        element.loading = "lazy";
+                    } else if (file.type?.startsWith("video/")) {
+                        element = document.createElement("video");
+                        element.controls = true;
+                        element.preload = "metadata";
+                    }
+
+                    if (element && file.url) {
+                        element.src = file.url;
+                        mediaContainer.appendChild(element);
+                    }
+                });
+            }
+
+            const date = document.createElement("small");
+            date.className = "update-date";
+            date.textContent = update.created_at || "";
+
+            card.appendChild(title);
+            card.appendChild(description);
+
+            if (mediaContainer.children.length > 0) {
+                card.appendChild(mediaContainer);
+            }
+
+            card.appendChild(date);
+            container.appendChild(card);
+        });
+
+    } catch (error) {
+        console.error("Updates loading error:", error);
+
+        container.textContent =
+            "Не успяхме да заредим ъпдейтите. Опитай отново по-късно.";
+    }
+}
+
+loadAllUpdates();
+</script>
+
+</body>
+</html>

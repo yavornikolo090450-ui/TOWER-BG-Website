@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOWER BG | Workers</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:30px 18px;background:#080811;color:white;font-family:Arial,sans-serif}
+.container{max-width:1050px;margin:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:28px}
+h1{margin:0 0 8px}
+.subtitle{color:#aaa5bb;margin:0}
+.panel{background:#141421;border:1px solid #7545bd;border-radius:15px;padding:25px}
+button{padding:12px 16px;border:0;border-radius:8px;font-weight:bold;cursor:pointer}
+.orange{background:#f28c28;color:#111}
+.gray{background:#383044;color:white}
+.red{background:#963348;color:white}
+button:disabled{opacity:.5;cursor:not-allowed}
+.back{display:inline-block;color:#c8a5ff;text-decoration:none;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{padding:15px 10px;border-bottom:1px solid #302b3b;text-align:left}
+th{color:#aaa5bb;font-size:12px}
+.role{display:inline-block;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+.tester{background:#173c2b;color:#80e0a5}
+.developer{background:#18364d;color:#8acaff}
+.manager{background:#49351c;color:#ffc26b}
+.status{margin-top:15px;color:#c4a6ff;white-space:pre-wrap}
+.empty{text-align:center;color:#aaa5bb;padding:25px}
+dialog{width:min(460px,calc(100% - 25px));border:1px solid #51406d;border-radius:14px;background:#171421;color:white;padding:24px}
+dialog::backdrop{background:#000b}
+dialog h2{margin-top:0}
+label{display:block;margin:14px 0 7px;font-weight:bold}
+input,select{width:100%;padding:13px;border:1px solid #51406d;border-radius:8px;background:#090912;color:white}
+.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+.error{color:#ff9d9d;margin-top:12px}
+.table-wrap{overflow-x:auto}
+@media(max-width:600px){body{padding:20px 10px}.panel{padding:16px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<a class="back" href="admin.html">← ОБРАТНО К ADMIN PANEL</a>
+<div style="margin-bottom: 20px;">
+    <button class="gray" onclick="location.href='admin.html'">
+        ← НАЗАД КЪМ ADMIN PANEL
+    </button>
+</div>
+<div class="topbar">
+    <div>
+        <h1>👥 Работници</h1>
+        <p class="subtitle">Управление на екипа на TOWER BG</p>
+    </div>
+    <button class="orange" id="openCreate">+ ДОБАВИ НОВ РАБОТНИК</button>
+</div>
+
+<div class="panel">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ИМЕ</th>
+                    <th>ИМЕЙЛ</th>
+                    <th>РОЛЯ</th>
+                    <th>СЪЗДАДЕН НА</th>
+                    <th>ДЕЙСТВИЕ</th>
+                </tr>
+            </thead>
+            <tbody id="workersList"></tbody>
+        </table>
+    </div>
+
+    <div id="emptyMessage" class="empty" hidden>
+        Все още няма добавени работници.
+    </div>
+    <div id="status" class="status">Зареждане...</div>
+</div>
+
+</div>
+
+<!-- CREATE WORKER -->
+<dialog id="createDialog">
+    <h2>Добави нов работник</h2>
+
+    <form id="createForm">
+        <label for="role">Избери роля</label>
+        <select id="role" required>
+            <option value="">Избери...</option>
+            <option value="tester">Тестър</option>
+            <option value="developer">Разработчик</option>
+            <option value="manager">Мениджър</option>
+        </select>
+
+        <label for="name">Име</label>
+        <input id="name" maxlength="80" required>
+
+        <label for="email">Имейл</label>
+        <input id="email" type="email" maxlength="254" required>
+
+        <label for="password">Парола на работника</label>
+        <input id="password" type="password" minlength="12"
+               maxlength="128" autocomplete="new-password" required>
+
+        <label for="confirmPassword">Повтори паролата</label>
+        <input id="confirmPassword" type="password"
+               autocomplete="new-password" required>
+
+        <label for="ownerPassword">Твоята администраторска парола</label>
+        <input id="ownerPassword" type="password"
+               autocomplete="current-password" required>
+
+        <div id="createError" class="error"></div>
+
+        <div class="actions">
+            <button type="button" class="gray" id="cancelCreate">ОТКАЗ</button>
+            <button type="submit" class="orange" id="createButton">
+                СЪЗДАЙ АКАУНТ
+            </button>
+        </div>
+    </form>
+</dialog>
+
+
+<!-- DELETE WORKER -->
+<dialog id="deleteDialog">
+    <h2>Изтриване на работник</h2>
+    <p>Въведи своята администраторска парола за потвърждение.</p>
+
+    <label for="deletePassword">Твоята парола</label>
+    <input id="deletePassword" type="password"
+           autocomplete="current-password">
+
+    <div id="deleteError" class="error"></div>
+
+    <div class="actions">
+        <button class="gray" id="cancelDelete">ОТКАЗ</button>
+        <button class="red" id="confirmDelete">ИЗТРИЙ</button>
+    </div>
+</dialog>
+
+
+<script>
+const API = "/api/staff";
+
+const list = document.getElementById("workersList");
+const statusBox = document.getElementById("status");
+const emptyMessage = document.getElementById("emptyMessage");
+const createDialog = document.getElementById("createDialog");
+const deleteDialog = document.getElementById("deleteDialog");
+
+let selectedDeleteId = null;
+
+const roleNames = {
+    tester: "Тестър",
+    developer: "Разработчик",
+    manager: "Мениджър"
+};
+
+async function apiRequest(data) {
+    const response = await fetch(API, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (response.status === 401) {
+        alert("Трябва да влезеш като собственик.");
+        location.href = "admin.html";
+        throw new Error("Нямаш достъп.");
+    }
+
+    if (!response.ok) {
+        throw new Error(result.error || "Възникна грешка.");
+    }
+
+    return result;
+}
+
+function makeCell(value) {
+    const cell = document.createElement("td");
+    cell.textContent = value || "";
+    return cell;
+}
+
+async function loadWorkers() {
+    statusBox.textContent = "Зареждане на работниците...";
+    list.replaceChildren();
+
+    try {
+        const result = await apiRequest({action: "list"});
+        const workers = result.workers || [];
+
+        emptyMessage.hidden = workers.length !== 0;
+
+        for (const worker of workers) {
+            const row = document.createElement("tr");
+
+            row.appendChild(makeCell(worker.name));
+            row.appendChild(makeCell(worker.email));
+
+            const roleCell = document.createElement("td");
+            const badge = document.createElement("span");
+            badge.className = "role " + worker.role;
+            badge.textContent = roleNames[worker.role] || worker.role;
+            roleCell.appendChild(badge);
+            row.appendChild(roleCell);
+
+            let dateText = "—";
+            if (worker.created_at) {
+                dateText = new Date(
+                    worker.created_at.replace(" ", "T") + "Z"
+                ).toLocaleString("bg-BG");
+            }
+            row.appendChild(makeCell(dateText));
+
+            const actionCell = document.createElement("td");
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "red";
+            deleteButton.textContent = "ИЗТРИЙ";
+
+            deleteButton.addEventListener("click", () => {
+                selectedDeleteId = worker.id;
+                document.getElementById("deletePassword").value = "";
+                document.getElementById("deleteError").textContent = "";
+                deleteDialog.showModal();
+            });
+
+            actionCell.appendChild(deleteButton);
+            row.appendChild(actionCell);
+
+            list.appendChild(row);
+        }
+
+        statusBox.textContent = "Общо работници: " + workers.length;
+
+    } catch (error) {
+        statusBox.textContent = error.message;
+    }
+}
+
+
+// OPEN CREATE WINDOW
+document.getElementById("openCreate").addEventListener("click", () => {
+    document.getElementById("createForm").reset();
+    document.getElementById("createError").textContent = "";
+    createDialog.showModal();
+});
+
+document.getElementById("cancelCreate").addEventListener("click", () => {
+    createDialog.close();
+});
+
+
+// CREATE WORKER
+document.getElementById("createForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const button = document.getElementById("createButton");
+    const errorBox = document.getElementById("createError");
+
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    if (password !== confirmPassword) {
+        errorBox.textContent = "Паролите не съвпадат.";
+        return;
+    }
+
+    button.disabled = true;
+    errorBox.textContent = "Създаване на акаунта...";
+
+    try {
+        await apiRequest({
+            action: "create",
+            role: document.getElementById("role").value,
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            password,
+            ownerPassword: document.getElementById("ownerPassword").value
+        });
+
+        createDialog.close();
+        await loadWorkers();
+
+    } catch (error) {
+        errorBox.textContent = error.message;
+    } finally {
+        button.disabled = false;
+    }
+});
+
+
+// CANCEL DELETE
+document.getElementById("cancelDelete").addEventListener("click", () => {
+    deleteDialog.close();
+});
+
+
+// DELETE WORKER
+document.getElementById("confirmDelete").addEventListener("click", async () => {
+    const button = document.getElementById("confirmDelete");
+    const errorBox = document.getElementById("deleteError");
+
+    button.disabled = true;
+    errorBox.textContent = "";
+
+    try {
+        await apiRequest({
+            action: "delete",
+            id: selectedDeleteId,
+            ownerPassword: document.getElementById("deletePassword").value
+        });
+
+        deleteDialog.close();
+        await loadWorkers();
+
+    } catch (error) {
+        errorBox.textContent = error.message;
+    } finally {
+        button.disabled = false;
+    }
+});
+
+loadWorkers();
+</script>
+</body>
+</html>

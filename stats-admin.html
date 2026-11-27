@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TOWER BG - Statistics</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 25px;
+      background: #10131c;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    .container { max-width: 1100px; margin: auto; }
+    h1 { color: #ff9b35; }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 12px 17px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .orange { background: #ff9b35; color: #171717; }
+    .gray { background: #292e3d; color: white; }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 15px;
+    }
+    .card {
+      background: #1b2030;
+      border: 1px solid #30384b;
+      border-radius: 12px;
+      padding: 22px;
+    }
+    .card p { color: #aeb7ca; margin: 0 0 12px; }
+    .number { font-size: 32px; font-weight: bold; }
+    section { margin-top: 30px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      text-align: left;
+      padding: 13px;
+      border-bottom: 1px solid #30384b;
+    }
+    .panel {
+      background: #1b2030;
+      border: 1px solid #30384b;
+      border-radius: 12px;
+      padding: 20px;
+      overflow-x: auto;
+    }
+    .bar {
+      height: 9px;
+      background: #ff9b35;
+      border-radius: 10px;
+      margin-top: 6px;
+    }
+    #message { color: #ffb45c; margin-top: 15px; }
+    @media(max-width:600px) {
+      body { padding: 15px; }
+      th, td { padding: 9px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="top">
+    <div>
+      <h1>📊 TOWER BG Statistics</h1>
+      <p>Статистика на посещенията в сайта</p>
+    </div>
+    <div>
+      <button class="gray" onclick="location.href='admin.html'">← Админ панел</button>
+      <button class="orange" onclick="loadStats()">Обнови</button>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <p>Общо посещения</p>
+      <div class="number" id="totalViews">—</div>
+    </div>
+    <div class="card">
+      <p>Уникални посетители</p>
+      <div class="number" id="uniqueVisitors">—</div>
+    </div>
+    <div class="card">
+      <p>Посещения днес</p>
+      <div class="number" id="todayViews">—</div>
+    </div>
+    <div class="card">
+      <p>Посетители днес</p>
+      <div class="number" id="todayVisitors">—</div>
+    </div>
+  </div>
+
+  <section>
+    <h2>🌐 Най-посещавани страници</h2>
+    <div class="panel">
+      <table>
+        <thead>
+          <tr><th>Страница</th><th>Посещения</th></tr>
+        </thead>
+        <tbody id="pagesTable">
+          <tr><td colspan="2">Зареждане...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>📅 Посещения през последните 7 дни</h2>
+    <div class="panel">
+      <div id="dailyChart">Зареждане...</div>
+    </div>
+  </section>
+
+  <p id="message"></p>
+</div>
+
+<script>
+async function loadStats() {
+  const message = document.getElementById("message");
+  message.textContent = "Зареждане...";
+
+  try {
+    const response = await fetch("/api/stats", {
+      credentials: "same-origin"
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Няма достъп до статистиката.");
+    }
+
+    document.getElementById("totalViews").textContent = data.totalViews ?? 0;
+    document.getElementById("uniqueVisitors").textContent = data.uniqueVisitors ?? 0;
+    document.getElementById("todayViews").textContent = data.todayViews ?? 0;
+    document.getElementById("todayVisitors").textContent = data.todayVisitors ?? 0;
+
+    const pages = data.topPages || [];
+    const maxViews = Math.max(1, ...pages.map(p => Number(p.views) || 0));
+
+    document.getElementById("pagesTable").innerHTML = pages.length
+      ? pages.map(p => `
+        <tr>
+          <td>${escapeHTML(p.page)}</td>
+          <td>
+            ${Number(p.views) || 0}
+            <div class="bar" style="width:${Math.max(2, (p.views / maxViews) * 100)}%"></div>
+          </td>
+        </tr>
+      `).join("")
+      : '<tr><td colspan="2">Все още няма посещения.</td></tr>';
+
+    const days = data.dailyViews || [];
+    document.getElementById("dailyChart").innerHTML = days.length
+      ? days.map(d => `
+        <div style="margin:14px 0">
+          <div>${escapeHTML(d.day)} — ${Number(d.views) || 0} посещения</div>
+          <div class="bar" style="width:${Math.max(2, (d.views / Math.max(1, ...days.map(x => Number(x.views) || 0))) * 100)}%"></div>
+        </div>
+      `).join("")
+      : "Все още няма данни за последните 7 дни.";
+
+    message.textContent = "Статистиката е обновена.";
+  } catch (error) {
+    message.textContent = error.message;
+  }
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[char]);
+}
+
+loadStats();
+</script>
+</body>
+</html>

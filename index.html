@@ -1,0 +1,1253 @@
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TOWER BG | Official Roblox Game</title>
+    <meta name="description" content="Добре дошъл в TOWER BG! Открий новини, ъпдейти, класации и нашата Roblox общност.">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --background: #080811;
+            --panel: #141421;
+            --purple: #934cff;
+            --purple-light: #b68aff;
+            --text: #ffffff;
+            --muted: #aaa5bb;
+            --border: #35234d;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 90px;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, input, textarea, select {
+            font: inherit;
+        }
+
+        button, a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* NAVIGATION */
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(12, 11, 22, 0.96);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(12px);
+        }
+
+        .nav-container {
+            max-width: 1250px;
+            width: 92%;
+            margin: auto;
+            min-height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: var(--purple-light);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: #ddd7e8;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--purple-light);
+        }
+
+        .admin-link {
+            color: #c49cff !important;
+        }
+
+        .events-link {
+            color: #c49cff !important;
+            font-weight: bold;
+        }
+
+        .events-link:hover {
+            color: #ffffff !important;
+        }
+
+        /* BUTTONS */
+
+        .button {
+            display: inline-block;
+            padding: 13px 23px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .button-purple {
+            background: var(--purple);
+            color: white;
+        }
+
+        .button-purple:hover {
+            background: #7735d6;
+        }
+
+        .button-outline {
+            border-color: var(--purple);
+            color: white;
+            background: transparent;
+        }
+
+        /* HERO */
+
+        .hero {
+            min-height: 620px;
+            padding: 100px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background:
+                radial-gradient(ellipse at 50% 45%, rgba(125, 57, 220, 0.23), transparent 65%),
+                #080811;
+        }
+
+        .hero-content {
+            max-width: 850px;
+        }
+
+        .official-label {
+            display: inline-block;
+            padding: 8px 15px;
+            border: 1px solid #65458c;
+            border-radius: 30px;
+            color: #c9aaff;
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            font-size: clamp(55px, 10vw, 105px);
+            font-weight: 900;
+            letter-spacing: 4px;
+            line-height: 1.1;
+            text-shadow: 0 0 35px rgba(147, 76, 255, 0.3);
+        }
+
+        .hero h2 {
+            color: var(--purple-light);
+            font-size: clamp(24px, 5vw, 42px);
+            margin: 15px 0;
+        }
+
+        .hero p {
+            max-width: 650px;
+            margin: 20px auto 30px;
+            color: var(--muted);
+            font-size: 17px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* GENERAL SECTIONS */
+
+        .section {
+            max-width: 1150px;
+            width: 92%;
+            margin: auto;
+            padding: 85px 0;
+        }
+
+        .section-heading {
+            margin-bottom: 35px;
+        }
+
+        .section-tag {
+            color: var(--purple-light);
+            font-size: 12px;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .section-heading h2 {
+            font-size: clamp(28px, 5vw, 40px);
+        }
+
+        .section-heading p {
+            color: var(--muted);
+            margin-top: 10px;
+        }
+
+        .purple {
+            color: var(--purple-light);
+        }
+
+        /* ABOUT */
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .about-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 27px;
+            transition: 0.2s;
+        }
+
+        .about-card:hover {
+            border-color: var(--purple);
+            transform: translateY(-4px);
+        }
+
+        .about-icon {
+            font-size: 35px;
+            margin-bottom: 15px;
+        }
+
+        .about-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .about-card p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* LATEST NEWS */
+
+        .latest-news {
+            border-top: 1px solid #20172e;
+            border-bottom: 1px solid #20172e;
+            background: #0d0b17;
+        }
+
+        .update-preview-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 25px;
+        }
+
+        .update-preview-card h3 {
+            font-size: 23px;
+            color: var(--purple-light);
+            margin-bottom: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .update-preview-card p {
+            color: #d0c9dd;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            line-height: 1.7;
+        }
+
+        .update-date {
+            display: block;
+            color: #9287a4;
+            font-size: 12px;
+            margin-top: 15px;
+        }
+
+        .update-media {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .update-media img,
+        .update-media video {
+            display: block;
+            width: 100%;
+            max-width: 450px;
+            max-height: 350px;
+            border-radius: 10px;
+            object-fit: contain;
+            background: #080811;
+        }
+
+        .view-more-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 18px;
+        }
+
+        .view-more-btn {
+            display: inline-block;
+            background: var(--purple);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .view-more-btn:hover {
+            background: #7132d0;
+            transform: translateY(-2px);
+        }
+
+        .loading-message {
+            color: var(--muted);
+            padding: 20px 0;
+        }
+
+        /* TIME BOARD */
+
+        .leaderboard-box {
+            overflow-x: auto;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 20px;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 450px;
+        }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .leaderboard-table th {
+            color: var(--purple-light);
+            font-size: 12px;
+        }
+
+        .leaderboard-table td {
+            color: #ded8e9;
+        }
+
+        .small-note {
+            color: var(--muted);
+            margin-top: 18px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* SUPPORT */
+
+        .support-section {
+            background: #0d0b17;
+            border-top: 1px solid #20172e;
+            border-bottom: 1px solid #20172e;
+        }
+
+        .support-form {
+            max-width: 800px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 18px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .support-form label {
+            display: block;
+            color: #e0d9ed;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .support-form input,
+        .support-form select,
+        .support-form textarea {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            background: #090912;
+            color: white;
+            border: 1px solid #51406d;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .support-form input:focus,
+        .support-form select:focus,
+        .support-form textarea:focus {
+            border-color: var(--purple);
+        }
+
+        .support-form textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        .support-form select option {
+            background: #141421;
+        }
+
+        .agreement {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 17px 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .agreement input {
+            width: auto;
+            margin-top: 3px;
+            accent-color: var(--purple);
+        }
+
+        .agreement a {
+            color: var(--purple-light);
+            text-decoration: underline;
+        }
+
+        .support-form button {
+            width: 100%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .support-status {
+            color: var(--purple-light);
+            margin-top: 15px;
+            font-size: 13px;
+        }
+
+        /* COMMUNITY */
+
+        .community {
+            text-align: center;
+            background:
+                radial-gradient(ellipse at center, rgba(125, 57, 220, 0.13), transparent 70%);
+        }
+
+        .community h2 {
+            font-size: clamp(28px, 5vw, 40px);
+            margin-bottom: 15px;
+        }
+
+        .community p {
+            color: var(--muted);
+            margin-bottom: 25px;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 35px 15px;
+            text-align: center;
+            background: #080811;
+        }
+
+        .footer-logo {
+            font-size: 23px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .footer-logo span {
+            color: var(--purple-light);
+        }
+
+        .footer p {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 18px 0;
+            font-size: 12px;
+            color: #c9bddc;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 850px) {
+            .nav-container {
+                padding: 15px 0;
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .nav-links {
+                gap: 14px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                min-height: 520px;
+                padding: 75px 18px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .support-form {
+                padding: 20px;
+            }
+
+            .section {
+                padding: 60px 0;
+            }
+
+            .nav-links {
+                gap: 12px;
+            }
+
+            .nav-links a {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+
+    <header class="navbar">
+        <div class="nav-container">
+
+            <a href="#home" class="logo">
+                TOWER <span>BG</span>
+            </a>
+
+            <nav class="nav-links">
+                <a href="#home">Начало</a>
+                <a href="#about">За играта</a>
+                <a href="#updates">Новини</a>
+
+                <!-- NEW EVENTS BUTTON -->
+                <a
+                    href="events.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="events-link">
+                    🎉 Събития
+                </a>
+
+                <a href="#leaderboard">Time Board</a>
+                <a href="#support">Support</a>
+                <a href="#community">Общност</a>
+                <a href="admin.html" class="admin-link">🔐 Администратор</a>
+            </nav>
+
+        </div>
+    </header>
+
+
+    <!-- HOME -->
+
+    <main>
+
+        <section class="hero" id="home">
+
+            <div class="hero-content">
+
+                <div class="official-label">
+                    ● OFFICIAL ROBLOX GAME
+                </div>
+
+                <h1>TOWER BG</h1>
+
+                <h2>REACH THE TOP.</h2>
+
+                <p>
+                    Добре дошъл в TOWER BG!
+                    Приготви се за приключение, предизвикателства
+                    и незабравими моменти.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a
+                        href="https://www.roblox.com/games/130583608053204/Tower-BG"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="button button-purple">
+                        🎮 PLAY NOW
+                    </a>
+
+                    <a
+                        href="https://discord.gg/trEKzgW9c"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="button button-outline">
+                        DISCORD COMMUNITY
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ABOUT THE GAME -->
+
+        <section class="section" id="about">
+
+            <div class="section-heading">
+
+                <div class="section-tag">
+                    ABOUT THE GAME
+                </div>
+
+                <h2>ЗА TOWER BG</h2>
+
+                <p>
+                    TOWER BG е Roblox игра, в която те очакват
+                    интересни предизвикателства и приключения.
+                    Покажи уменията си и достигни върха!
+                </p>
+
+            </div>
+
+            <div class="about-grid">
+
+                <article class="about-card">
+                    <div class="about-icon">🏆</div>
+                    <h3>ПРЕДИЗВИКАТЕЛСТВА</h3>
+                    <p>
+                        Докажи, че можеш да стигнеш върха.
+                    </p>
+                </article>
+
+                <article class="about-card">
+                    <div class="about-icon">🎮</div>
+                    <h3>ЗАБАВЛЕНИЕ</h3>
+                    <p>
+                        Играй и се забавлявай с приятели.
+                    </p>
+                </article>
+
+                <article class="about-card">
+                    <div class="about-icon">⚡</div>
+                    <h3>НОВИ ЪПДЕЙТИ</h3>
+                    <p>
+                        Очаквай нови подобрения и изненади.
+                    </p>
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- LATEST NEWS -->
+
+        <section class="latest-news" id="updates">
+
+            <div class="section">
+
+                <div class="section-heading">
+
+                    <div class="section-tag">
+                        LATEST NEWS
+                    </div>
+
+                    <h2>НОВИНИ И ЪПДЕЙТИ</h2>
+
+                </div>
+
+                <!-- Only the newest update appears here -->
+
+                <div id="latestUpdate">
+
+                    <p class="loading-message">
+                        Зареждане на най-новия ъпдейт...
+                    </p>
+
+                </div>
+
+                <div class="view-more-container">
+
+                    <a href="updates.html" class="view-more-btn">
+                        Виж още →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- TIME BOARD -->
+
+        <section class="section" id="leaderboard">
+
+            <div class="section-heading">
+
+                <div class="section-tag">
+                    TOWER BG RANKING
+                </div>
+
+                <h2>TIME <span class="purple">BOARD</span></h2>
+
+                <p>
+                    Най-активните играчи в TOWER BG!
+                </p>
+
+            </div>
+
+            <div class="leaderboard-box">
+
+                <table class="leaderboard-table">
+
+                    <thead>
+                        <tr>
+                            <th>МЯСТО</th>
+                            <th>ИГРАЧ</th>
+                            <th>ВРЕМЕ В ИГРАТА</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="leaderboardBody">
+                        <tr>
+                            <td colspan="3">
+                                Класацията се подготвя...
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+                <p class="small-note">
+                    TOWER BG – PLAYTIME RANKING
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- SUPPORT -->
+
+        <section class="support-section" id="support">
+
+            <div class="section">
+
+                <div class="section-heading">
+
+                    <div class="section-tag">
+                        TOWER BG SUPPORT
+                    </div>
+
+                    <h2>СВЪРЖИ СЕ С SUPPORT</h2>
+
+                    <p>
+                        Изпрати ни заявка и нашият екип ще се свърже с теб по имейл.
+                    </p>
+
+                </div>
+
+                <form class="support-form" id="supportForm">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input
+                                type="text"
+                                id="firstName"
+                                name="firstName"
+                                autocomplete="given-name"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input
+                                type="text"
+                                id="lastName"
+                                name="lastName"
+                                autocomplete="family-name"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="supportEmail">Email</label>
+                            <input
+                                type="email"
+                                id="supportEmail"
+                                name="email"
+                                autocomplete="email"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmEmail">Confirm Email</label>
+                            <input
+                                type="email"
+                                id="confirmEmail"
+                                name="confirmEmail"
+                                autocomplete="email"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="robloxUsername">Roblox Username</label>
+                            <input
+                                type="text"
+                                id="robloxUsername"
+                                name="robloxUsername"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="supportCategory">Support Category</label>
+
+                            <select
+                                id="supportCategory"
+                                name="category"
+                                required>
+
+                                <option value="">Избери категория</option>
+                                <option value="Bug Report">Bug Report</option>
+                                <option value="Player Report">Player Report</option>
+                                <option value="Security Report">Security Report</option>
+                                <option value="Other">Other</option>
+
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+
+                            <label for="supportDescription">
+                                Description
+                            </label>
+
+                            <textarea
+                                id="supportDescription"
+                                name="description"
+                                placeholder="Опиши подробно своя проблем или сигнал..."
+                                required></textarea>
+
+                        </div>
+
+                    </div>
+
+                    <label class="agreement">
+
+                        <input
+                            type="checkbox"
+                            id="agreeRules"
+                            name="agreeRules"
+                            required>
+
+                        <span>
+                            Съгласен съм с
+                            <a href="rules.html" target="_blank">
+                                правилата на TOWER BG
+                            </a>.
+                        </span>
+
+                    </label>
+
+                    <label class="agreement">
+
+                        <input
+                            type="checkbox"
+                            id="confirmOwnership"
+                            name="confirmOwnership"
+                            required>
+
+                        <span>
+                            Потвърждавам, че посоченият имейл е мой
+                            и е правилен.
+                        </span>
+
+                    </label>
+
+                    <button
+                        type="submit"
+                        class="button button-purple">
+
+                        SEND SUPPORT REQUEST
+
+                    </button>
+
+                    <p
+                        id="supportStatus"
+                        class="support-status"
+                        aria-live="polite">
+                    </p>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- COMMUNITY -->
+
+        <section class="section community" id="community">
+
+            <div class="section-tag">
+                JOIN OUR COMMUNITY
+            </div>
+
+            <h2>СТАНИ ЧАСТ ОТ TOWER BG</h2>
+
+            <p>
+                Присъедини се към нашата общност
+                и бъди част от приключението!
+            </p>
+
+            <a
+                href="https://discord.gg/trEKzgW9c"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="button button-purple">
+
+                JOIN OUR DISCORD
+
+            </a>
+
+            <p style="margin-top: 20px;">
+                Очакваме те в нашата общност!
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+
+        <div class="footer-logo">
+            TOWER <span>BG</span>
+        </div>
+
+        <div class="footer-links">
+            <a href="#home">Начало</a>
+            <a href="#updates">Новини</a>
+
+            <a
+                href="events.html"
+                target="_blank"
+                rel="noopener noreferrer">
+                Събития
+            </a>
+
+            <a href="#support">Support</a>
+            <a href="rules.html">Правила</a>
+            <a href="admin.html">Администратор</a>
+        </div>
+
+        <p>
+            OFFICIAL ROBLOX GAME WEBSITE
+        </p>
+
+        <p style="margin-top: 10px;">
+            © 2026 TOWER BG. All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- LOAD ONLY THE LATEST UPDATE -->
+
+    <script>
+    async function loadLatestUpdate() {
+
+        const container =
+            document.getElementById("latestUpdate");
+
+        if (!container) return;
+
+        container.textContent =
+            "Зареждане на най-новия ъпдейт...";
+
+        try {
+
+            const response = await fetch("/api/updates", {
+                cache: "no-store"
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.error || "Новините не могат да бъдат заредени."
+                );
+            }
+
+            container.replaceChildren();
+
+            if (!Array.isArray(data.updates) ||
+                data.updates.length === 0) {
+
+                const empty = document.createElement("p");
+                empty.className = "loading-message";
+                empty.textContent =
+                    "Все още няма публикувани ъпдейти.";
+
+                container.appendChild(empty);
+                return;
+            }
+
+            // The API must return the newest update first.
+            const update = data.updates[0];
+
+            const card = document.createElement("article");
+            card.className = "update-preview-card";
+
+            const title = document.createElement("h3");
+            title.textContent = update.title;
+
+            const description = document.createElement("p");
+            description.textContent =
+                update.description || "";
+
+            card.appendChild(title);
+            card.appendChild(description);
+
+            const mediaContainer =
+                document.createElement("div");
+
+            mediaContainer.className = "update-media";
+
+            if (update.image_url) {
+
+                const image = document.createElement("img");
+                image.src = update.image_url;
+                image.alt = update.title;
+                image.loading = "lazy";
+
+                mediaContainer.appendChild(image);
+            }
+
+            if (Array.isArray(update.media)) {
+
+                update.media.forEach(media => {
+
+                    let element;
+
+                    if (media.type &&
+                        media.type.startsWith("image/")) {
+
+                        element = document.createElement("img");
+                        element.alt = update.title;
+                        element.loading = "lazy";
+
+                    } else if (media.type &&
+                               media.type.startsWith("video/")) {
+
+                        element = document.createElement("video");
+                        element.controls = true;
+                        element.preload = "metadata";
+
+                    }
+
+                    if (element && media.url) {
+                        element.src = media.url;
+                        mediaContainer.appendChild(element);
+                    }
+
+                });
+            }
+
+            if (mediaContainer.children.length > 0) {
+                card.appendChild(mediaContainer);
+            }
+
+            const date = document.createElement("small");
+            date.className = "update-date";
+
+            if (update.created_at) {
+                date.textContent = update.created_at;
+            }
+
+            card.appendChild(date);
+            container.appendChild(card);
+
+        } catch (error) {
+
+            console.error("Latest update error:", error);
+
+            container.textContent =
+                "Новините временно не могат да бъдат заредени.";
+        }
+    }
+
+    loadLatestUpdate();
+
+    // Refresh the latest update every minute.
+    setInterval(loadLatestUpdate, 60000);
+    </script>
+
+
+<!-- TOWER BG VISITOR TRACKING -->
+<img
+    src="/api/stats?track=1&amp;page=%2F"
+    alt=""
+    width="1"
+    height="1"
+    style="display:none"
+    aria-hidden="true">
+
+// TOWER BG REPORTS - SUPPORT FORM
+const supportForm = document.getElementById("supportForm");
+
+if (supportForm) {
+    supportForm.addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const status = document.getElementById("supportStatus");
+        const button = supportForm.querySelector('button[type="submit"]');
+
+        const email = document.getElementById("supportEmail").value.trim();
+        const confirmEmail = document.getElementById("confirmEmail").value.trim();
+
+        if (email.toLowerCase() !== confirmEmail.toLowerCase()) {
+            status.textContent = "Имейл адресите не съвпадат!";
+            return;
+        }
+
+        const formData = new FormData(supportForm);
+
+        const data = {
+            action: "create",
+            firstName: formData.get("firstName"),
+            lastName: formData.get("lastName"),
+            email: formData.get("email"),
+            confirmEmail: formData.get("confirmEmail"),
+            robloxUsername: formData.get("robloxUsername"),
+            category: formData.get("category"),
+            description: formData.get("description"),
+            agreeRules: formData.get("agreeRules") === "on",
+            confirmOwnership: formData.get("confirmOwnership") === "on"
+        };
+
+        button.disabled = true;
+        button.textContent = "ИЗПРАЩАНЕ...";
+        status.textContent = "";
+
+        try {
+            const response = await fetch("/api/reports", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error(result.error || "Неуспешно изпращане.");
+            }
+
+            status.textContent = "✅ Сигналът е изпратен успешно!";
+            supportForm.reset();
+
+        } catch (error) {
+            status.textContent = "❌ " + error.message;
+        } finally {
+            button.disabled = false;
+            button.textContent = "SEND SUPPORT REQUEST";
+        }
+    });
+}
+
+    <!-- EXISTING SITE JAVASCRIPT -->
+
+    <script src="script.js"></script>
+    <script src="site-design.js"></script>
+
+</body>
+</html>

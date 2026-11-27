@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TOWER BG - Reports Manager</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 25px;
+      background: #10131c;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    .container { max-width: 1100px; margin: auto; }
+    h1 { color: #ff9b35; }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    button, select, textarea {
+      font: inherit;
+      border-radius: 8px;
+    }
+    button {
+      border: 0;
+      padding: 11px 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .orange { background: #ff9b35; color: #171717; }
+    .gray { background: #30384b; color: white; }
+    .red { background: #c83d46; color: white; }
+    .panel {
+      margin-top: 20px;
+      padding: 20px;
+      background: #1b2030;
+      border: 1px solid #30384b;
+      border-radius: 12px;
+    }
+    .report {
+      margin-top: 15px;
+      padding: 18px;
+      background: #202638;
+      border: 1px solid #384258;
+      border-radius: 10px;
+    }
+    .report h3 { margin-top: 0; color: #ffb45c; }
+    .muted { color: #aeb7ca; font-size: 14px; }
+    .description {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: #151a27;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    select, textarea {
+      width: 100%;
+      padding: 11px;
+      margin: 7px 0 12px;
+      color: white;
+      background: #151a27;
+      border: 1px solid #46516a;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .status {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #30384b;
+      font-size: 12px;
+    }
+    #message { color: #ffb45c; margin-top: 15px; }
+    @media(max-width:600px) {
+      body { padding: 14px; }
+      .panel, .report { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="top">
+    <div>
+      <h1>🚨 Reports Manager</h1>
+      <p class="muted">Управление на сигналите от посетителите</p>
+    </div>
+    <div class="actions">
+      <button class="gray" onclick="location.href='admin.html'">← Админ панел</button>
+      <button class="orange" onclick="loadReports()">Обнови</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <strong id="reportCount">Зареждане на сигналите...</strong>
+    <div id="message"></div>
+    <div id="reports"></div>
+  </div>
+</div>
+
+<script>
+let currentRole = null;
+
+async function api(data = null, method = "GET") {
+  const options = {
+    method,
+    credentials: "same-origin",
+    headers: {}
+  };
+
+  if (data) {
+    options.headers["Content-Type"] = "application/json";
+    options.body = JSON.stringify(data);
+  }
+
+  const response = await fetch("/api/reports", options);
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.error || "Възникна грешка.");
+  }
+
+  return result;
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[char]);
+}
+
+function statusName(status) {
+  return {
+    new: "Нов",
+    in_progress: "В процес",
+    resolved: "Решен"
+  }[status] || status;
+}
+
+async function loadReports() {
+  const message = document.getElementById("message");
+  const container = document.getElementById("reports");
+
+  message.textContent = "Зареждане...";
+
+  try {
+    const data = await api();
+    currentRole = data.role;
+
+    const reports = data.reports || [];
+    document.getElementById("reportCount").textContent =
+      "Общо сигнали: " + reports.length;
+
+    if (!reports.length) {
+      container.innerHTML = "<p>Все още няма получени сигнали.</p>";
+      message.textContent = "";
+      return;
+    }
+
+    container.innerHTML = reports.map(report => `
+      <article class="report">
+        <h3>🚨 Сигнал #${Number(report.id)}</h3>
+        <p class="muted">
+          Получен: ${escapeHTML(report.created_at)}
+          · Статус: <span class="status">${escapeHTML(statusName(report.status))}</span>
+        </p>
+
+        <p><strong>Име:</strong>
+          ${escapeHTML(report.first_name)} ${escapeHTML(report.last_name)}
+        </p>
+        <p><strong>Имейл:</strong>
+          <a style="color:#ffb45c" href="mailto:${encodeURIComponent(report.email)}">${escapeHTML(report.email)}</a>
+        </p>
+        <p><strong>Roblox потребител:</strong>
+          ${escapeHTML(report.roblox_username || "Не е посочен")}
+        </p>
+        <p><strong>Категория:</strong> ${escapeHTML(report.category)}</p>
+        <p><strong>Описание:</strong></p>
+        <div class="description">${escapeHTML(report.description)}</div>
+
+        <label for="status-${Number(report.id)}">Статус</label>
+        <select id="status-${Number(report.id)}">
+          <option value="new" ${report.status === "new" ? "selected" : ""}>Нов</option>
+          <option value="in_progress" ${report.status === "in_progress" ? "selected" : ""}>В процес</option>
+          <option value="resolved" ${report.status === "resolved" ? "selected" : ""}>Решен</option>
+        </select>
+
+        <label for="reply-${Number(report.id)}">Отговор / вътрешна бележка</label>
+        <textarea id="reply-${Number(report.id)}"
+          placeholder="Напиши отговор или бележка...">${escapeHTML(report.admin_reply || "")}</textarea>
+
+        <div class="actions">
+          <button class="orange" onclick="saveReport(${Number(report.id)})">
+            💾 Запази
+          </button>
+          ${currentRole === "owner" ? `
+            <button class="red" onclick="deleteReport(${Number(report.id)})">
+              🗑️ Изтрий
+            </button>
+          ` : ""}
+        </div>
+      </article>
+    `).join("");
+
+    message.textContent = "";
+  } catch (error) {
+    message.textContent = error.message;
+    container.innerHTML = "";
+    document.getElementById("reportCount").textContent = "Няма достъп";
+  }
+}
+
+async function saveReport(id) {
+  const status = document.getElementById("status-" + id).value;
+  const reply = document.getElementById("reply-" + id).value;
+
+  try {
+    await api({ action: "update", id, status, reply }, "POST");
+    document.getElementById("message").textContent = "Сигналът е запазен.";
+    await loadReports();
+  } catch (error) {
+    document.getElementById("message").textContent = error.message;
+  }
+}
+
+async function deleteReport(id) {
+  if (!confirm("Сигурен ли си, че искаш да изтриеш този сигнал?")) return;
+
+  try {
+    await api({ action: "delete", id }, "POST");
+    document.getElementById("message").textContent = "Сигналът е изтрит.";
+    await loadReports();
+  } catch (error) {
+    document.getElementById("message").textContent = error.message;
+  }
+}
+
+loadReports();
+</script>
+</body>
+</html>

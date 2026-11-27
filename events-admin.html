@@ -1,0 +1,900 @@
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TOWER BG | Events Management</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 25px 15px;
+    background: #080811;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+header {
+    max-width: 1100px;
+    margin: auto;
+    padding: 15px 0 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #a36bff;
+}
+
+.header-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.header-links a {
+    color: #c49cff;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 25px auto;
+}
+
+.panel {
+    padding: 28px;
+    margin-bottom: 25px;
+    background: #141421;
+    border: 1px solid #65458c;
+    border-radius: 15px;
+}
+
+h1 span, h2 span {
+    color: #a36bff;
+}
+
+.subtitle {
+    color: #aaa5bb;
+    line-height: 1.7;
+}
+
+label {
+    display: block;
+    margin: 18px 0 8px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+input:not([type="checkbox"]),
+textarea,
+select {
+    width: 100%;
+    padding: 13px;
+    background: #090912;
+    color: white;
+    border: 1px solid #51406d;
+    border-radius: 8px;
+    outline: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #a36bff;
+}
+
+textarea {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+input[type="datetime-local"] {
+    color-scheme: dark;
+}
+
+input[type="file"] {
+    padding: 12px;
+}
+
+button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.primary {
+    background: #934cff;
+    color: white;
+}
+
+.primary:hover {
+    background: #7736d6;
+}
+
+.secondary {
+    background: #383044;
+    color: white;
+}
+
+.danger {
+    background: #963348;
+    color: white;
+}
+
+.primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.full {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.form-group {
+    min-width: 0;
+}
+
+.upload-area {
+    border: 2px dashed #65458c;
+    border-radius: 12px;
+    background: #0c0b16;
+    padding: 25px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.upload-area p {
+    color: #aaa5bb;
+    font-size: 13px;
+}
+
+.repeat-box {
+    margin-top: 22px;
+    padding: 18px;
+    background: #0c0b16;
+    border: 1px solid #49345f;
+    border-radius: 10px;
+}
+
+.repeat-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.repeat-toggle input {
+    width: 18px;
+    height: 18px;
+    accent-color: #934cff;
+}
+
+.repeat-toggle label {
+    margin: 0;
+    cursor: pointer;
+}
+
+#repeatOptions {
+    display: none;
+    margin-top: 20px;
+}
+
+#repeatOptions.visible {
+    display: block;
+}
+
+.preview-area {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.preview-area img,
+.preview-area video {
+    max-width: 180px;
+    max-height: 140px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.event-card {
+    padding: 20px;
+    margin-top: 15px;
+    background: #0c0b16;
+    border: 1px solid #35234d;
+    border-radius: 12px;
+}
+
+.event-card h3 {
+    color: #b68aff;
+}
+
+.event-card p {
+    color: #d0c9dd;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.event-meta {
+    color: #aaa5bb;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.event-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.status {
+    color: #b68aff;
+    margin-top: 15px;
+    white-space: pre-wrap;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 650px) {
+    .panel {
+        padding: 19px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="logo">
+        TOWER <span>BG</span>
+    </div>
+
+    <div class="header-links">
+        <a href="admin.html">← Администрация</a>
+        <a href="events.html" target="_blank">Публични събития ↗</a>
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <!-- PAGE TITLE -->
+
+    <section class="panel">
+
+        <h1>🎉 <span>EVENTS MANAGEMENT</span></h1>
+
+        <p class="subtitle">
+            Създавай и управлявай събитията на TOWER BG.
+            Настройвай дата, час, продължителност,
+            повторение и прикачени файлове.
+        </p>
+
+    </section>
+
+
+    <!-- CREATE EVENT -->
+
+    <section class="panel">
+
+        <h2>1. <span>CREATE NEW EVENT</span></h2>
+
+        <form id="eventForm">
+
+            <label for="eventTitle">
+                Име на събитието
+            </label>
+
+            <input
+                type="text"
+                id="eventTitle"
+                name="title"
+                placeholder="Например: TOWER BG CHALLENGE 🏆"
+                required>
+
+            <label for="eventDescription">
+                Описание на събитието
+            </label>
+
+            <textarea
+                id="eventDescription"
+                name="description"
+                placeholder="Напиши информация за събитието..."
+                required></textarea>
+
+            <label for="eventLocation">
+                Място на събитието
+            </label>
+
+            <input
+                type="text"
+                id="eventLocation"
+                name="location"
+                placeholder="Например: TOWER BG Roblox Server"
+                required>
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="startAt">
+                        Дата и час на започване
+                    </label>
+
+                    <input
+                        type="datetime-local"
+                        id="startAt"
+                        name="startAt"
+                        step="60"
+                        required>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="endAt">
+                        Дата и час на приключване
+                    </label>
+
+                    <input
+                        type="datetime-local"
+                        id="endAt"
+                        name="endAt"
+                        step="60"
+                        required>
+
+                </div>
+
+            </div>
+
+
+            <!-- FILE UPLOAD -->
+
+            <label>Прикачване на файл</label>
+
+            <div class="upload-area">
+
+                <h3>📁 UPLOAD EVENT FILE</h3>
+
+                <p>
+                    Добави плакат, снимка или видеоклип
+                    към събитието.
+                </p>
+
+                <input
+                    type="file"
+                    id="eventFile"
+                    name="media"
+                    accept="image/*,video/mp4,video/webm,.pdf">
+
+                <div id="filePreview" class="preview-area"></div>
+
+            </div>
+
+
+            <!-- REPETITION -->
+
+            <div class="repeat-box">
+
+                <div class="repeat-toggle">
+
+                    <input
+                        type="checkbox"
+                        id="repeatEvent">
+
+                    <label for="repeatEvent">
+                        🔁 Повтаряй събитието
+                    </label>
+
+                </div>
+
+                <div id="repeatOptions">
+
+                    <label for="repeatType">
+                        Честота на повторение
+                    </label>
+
+                    <select id="repeatType" name="repeatType">
+
+                        <option value="daily">
+                            Повтаряй всеки ден
+                        </option>
+
+                        <option value="weekly">
+                            Повтаряй всяка седмица
+                        </option>
+
+                        <option value="monthly">
+                            Повтаряй всеки месец
+                        </option>
+
+                        <option value="yearly">
+                            Повтаряй всяка година
+                        </option>
+
+                    </select>
+
+                    <p class="subtitle">
+                        Повтарящите се събития ще запазват
+                        часа и продължителността си.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="submit"
+                id="publishEventButton"
+                class="primary full">
+
+                🚀 PUBLISH EVENT
+
+            </button>
+
+            <p id="eventStatus" class="status"></p>
+
+        </form>
+
+    </section>
+
+
+    <!-- EXISTING EVENTS -->
+
+    <section class="panel">
+
+        <h2>2. <span>ALL EVENTS</span></h2>
+
+        <p class="subtitle">
+            Всички събития, включително тези, които са
+            планирани за повече от пет месеца напред.
+            Те остават видими тук, дори когато са скрити
+            от публичната страница.
+        </p>
+
+        <button
+            type="button"
+            id="refreshEvents"
+            class="secondary">
+
+            ↻ REFRESH EVENTS
+
+        </button>
+
+        <div id="eventsList">
+
+            <p class="status">
+                Зареждане на събитията...
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+const eventForm = document.getElementById("eventForm");
+
+const repeatCheckbox =
+    document.getElementById("repeatEvent");
+
+const repeatOptions =
+    document.getElementById("repeatOptions");
+
+const fileInput =
+    document.getElementById("eventFile");
+
+const filePreview =
+    document.getElementById("filePreview");
+
+const eventStatus =
+    document.getElementById("eventStatus");
+
+const eventsList =
+    document.getElementById("eventsList");
+
+
+// SHOW/HIDE RECURRENCE OPTIONS
+
+repeatCheckbox.addEventListener("change", function() {
+
+    repeatOptions.classList.toggle(
+        "visible",
+        repeatCheckbox.checked
+    );
+
+});
+
+
+// FILE PREVIEW
+
+let previewUrls = [];
+
+fileInput.addEventListener("change", function() {
+
+    previewUrls.forEach(url => URL.revokeObjectURL(url));
+    previewUrls = [];
+
+    filePreview.replaceChildren();
+
+    const file = fileInput.files[0];
+
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    previewUrls.push(url);
+
+    let element;
+
+    if (file.type.startsWith("image/")) {
+
+        element = document.createElement("img");
+
+    } else if (file.type.startsWith("video/")) {
+
+        element = document.createElement("video");
+        element.controls = true;
+
+    } else if (file.type === "application/pdf") {
+
+        const message = document.createElement("p");
+        message.textContent = "PDF файл: " + file.name;
+
+        filePreview.appendChild(message);
+        return;
+
+    } else {
+
+        eventStatus.textContent =
+            "Форматът на файла не се поддържа.";
+
+        return;
+
+    }
+
+    element.src = url;
+
+    filePreview.appendChild(element);
+
+});
+
+
+// CHECK EVENT DATES
+
+function validateEventDates() {
+
+    const startValue =
+        document.getElementById("startAt").value;
+
+    const endValue =
+        document.getElementById("endAt").value;
+
+    if (!startValue || !endValue) {
+        return "Моля, избери дата и час за началото и края.";
+    }
+
+    const start = new Date(startValue);
+    const end = new Date(endValue);
+
+    if (
+        Number.isNaN(start.getTime()) ||
+        Number.isNaN(end.getTime())
+    ) {
+        return "Невалидна дата или час.";
+    }
+
+    if (end <= start) {
+        return "Краят на събитието трябва да е след началото.";
+    }
+
+    return null;
+
+}
+
+
+// CREATE EVENT
+
+eventForm.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    eventStatus.textContent = "";
+
+    const dateError = validateEventDates();
+
+    if (dateError) {
+        eventStatus.textContent = dateError;
+        return;
+    }
+
+    const button =
+        document.getElementById("publishEventButton");
+
+    button.disabled = true;
+    button.textContent = "PUBLISHING...";
+
+    try {
+
+        const formData = new FormData();
+
+        formData.append("action", "create");
+
+        formData.append(
+            "title",
+            document.getElementById("eventTitle").value.trim()
+        );
+
+        formData.append(
+            "description",
+            document.getElementById("eventDescription").value
+        );
+
+        formData.append(
+            "location",
+            document.getElementById("eventLocation").value.trim()
+        );
+
+        formData.append(
+            "startAt",
+            document.getElementById("startAt").value
+        );
+
+        formData.append(
+            "endAt",
+            document.getElementById("endAt").value
+        );
+
+        formData.append(
+            "timezone",
+            "Europe/Sofia"
+        );
+
+        formData.append(
+            "repeat",
+            repeatCheckbox.checked ? "true" : "false"
+        );
+
+        formData.append(
+            "repeatType",
+            repeatCheckbox.checked
+                ? document.getElementById("repeatType").value
+                : "none"
+        );
+
+        if (fileInput.files[0]) {
+            formData.append("media", fileInput.files[0]);
+        }
+
+        const response = await fetch("/api/events", {
+            method: "POST",
+            credentials: "same-origin",
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.error || "Събитието не беше публикувано."
+            );
+        }
+
+        eventStatus.textContent =
+            "✅ Събитието е създадено успешно!";
+
+        eventForm.reset();
+
+        repeatOptions.classList.remove("visible");
+
+        filePreview.replaceChildren();
+
+        await loadEvents();
+
+    } catch (error) {
+
+        console.error("Event publishing error:", error);
+
+        eventStatus.textContent = error.message;
+
+    } finally {
+
+        button.disabled = false;
+        button.textContent = "🚀 PUBLISH EVENT";
+
+    }
+
+});
+
+
+// LOAD ALL EVENTS
+
+async function loadEvents() {
+
+    eventsList.textContent = "Зареждане на събитията...";
+
+    try {
+
+        const response = await fetch("/api/events", {
+            method: "GET",
+            credentials: "same-origin",
+            cache: "no-store"
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.error || "Неуспешно зареждане."
+            );
+        }
+
+        eventsList.replaceChildren();
+
+        if (!Array.isArray(result.events) ||
+            result.events.length === 0) {
+
+            eventsList.textContent =
+                "Все още няма създадени събития.";
+
+            return;
+        }
+
+        result.events.forEach(item => {
+
+            const card = document.createElement("article");
+            card.className = "event-card";
+
+            const title = document.createElement("h3");
+            title.textContent = item.title;
+
+            const description = document.createElement("p");
+            description.textContent = item.description || "";
+
+            const meta = document.createElement("div");
+            meta.className = "event-meta";
+
+            meta.textContent =
+                "📍 " + (item.location || "Няма посочено място") +
+                "\nНачало: " + (item.start_at || "") +
+                "\nКрай: " + (item.end_at || "") +
+                "\nПовторение: " + (item.repeat_type || "Без повторение");
+
+            card.append(title, description, meta);
+
+            if (item.media_url) {
+
+                const link = document.createElement("a");
+
+                link.href = item.media_url;
+                link.target = "_blank";
+                link.rel = "noopener noreferrer";
+                link.textContent = "📎 Отвори прикачения файл";
+
+                card.appendChild(link);
+
+            }
+
+            const actions = document.createElement("div");
+            actions.className = "event-actions";
+
+            const deleteButton = document.createElement("button");
+
+            deleteButton.className = "danger";
+            deleteButton.textContent = "DELETE EVENT";
+
+            deleteButton.addEventListener("click", async function() {
+
+                if (!confirm(
+                    "Сигурен ли си, че искаш да изтриеш събитието?"
+                )) {
+                    return;
+                }
+
+                try {
+
+                    const response = await fetch("/api/events", {
+                        method: "POST",
+                        credentials: "same-origin",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            action: "delete",
+                            id: item.id
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok || !result.success) {
+                        throw new Error(
+                            result.error || "Събитието не беше изтрито."
+                        );
+                    }
+
+                    await loadEvents();
+
+                } catch (error) {
+
+                    alert(error.message);
+
+                }
+
+            });
+
+            actions.appendChild(deleteButton);
+            card.appendChild(actions);
+
+            eventsList.appendChild(card);
+
+        });
+
+    } catch (error) {
+
+        console.error("Events loading error:", error);
+
+        eventsList.textContent = error.message;
+
+    }
+
+}
+
+
+// REFRESH BUTTON
+
+document.getElementById("refreshEvents")
+.addEventListener("click", loadEvents);
+
+
+loadEvents();
+
+</script>
+
+</body>
+</html>

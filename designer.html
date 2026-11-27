@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOWER BG | Редактор на сайта</title>
+
+    <link rel="stylesheet" href="designer.css">
+</head>
+
+<body>
+
+<header class="editor-header">
+    <div class="editor-logo">
+        TOWER <span>BG</span>
+        <small>WEBSITE EDITOR</small>
+    </div>
+
+    <div class="header-actions">
+        <a href="admin.html">← Към администрацията</a>
+        <button id="previewButton">PREVIEW</button>
+        <button id="publishButton" disabled>PUBLISH WEBSITE</button>
+    </div>
+</header>
+
+<div class="editor-layout">
+
+    <!-- LEFT SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <h2>Редактор на сайта</h2>
+
+        <p class="muted">
+            Персонализирай външния вид на TOWER BG.
+        </p>
+
+        <div class="editor-group">
+
+            <h3>🎨 Цветове</h3>
+
+            <label>Основен цвят</label>
+            <input type="color" id="accentColor" value="#934cff">
+
+            <label>Фон на сайта</label>
+            <input type="color" id="backgroundColor" value="#080811">
+
+            <label>Цвят на текста</label>
+            <input type="color" id="textColor" value="#ffffff">
+
+        </div>
+
+        <div class="editor-group">
+
+            <h3>🔤 Шрифтове</h3>
+
+            <label>Шрифт</label>
+
+            <select id="fontFamily">
+                <option value="Arial">Arial</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Tahoma">Tahoma</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+            </select>
+
+            <label>Размер на заглавията</label>
+            <input type="range" id="headingSize"
+                   min="20" max="100" value="40">
+
+            <output id="headingSizeValue">40 px</output>
+
+            <label>Размер на текста</label>
+            <input type="range" id="bodySize"
+                   min="12" max="25" value="16">
+
+            <output id="bodySizeValue">16 px</output>
+
+        </div>
+
+        <div class="editor-group">
+
+            <h3>📦 Подредба на секциите</h3>
+
+            <p class="muted">
+                Издърпай секциите, за да промениш реда им.
+            </p>
+
+            <ul id="sectionOrder">
+
+                <li draggable="true" data-section="home">
+                    ☰ Начало
+                </li>
+
+                <li draggable="true" data-section="about">
+                    ☰ За играта
+                </li>
+
+                <li draggable="true" data-section="updates">
+                    ☰ Новини
+                </li>
+
+                <li draggable="true" data-section="leaderboard">
+                    ☰ Time Board
+                </li>
+
+                <li draggable="true" data-section="support">
+                    ☰ Support
+                </li>
+
+                <li draggable="true" data-section="community">
+                    ☰ Общност
+                </li>
+
+            </ul>
+
+        </div>
+
+        <button class="reset-button" id="resetButton">
+            RESET DESIGN
+        </button>
+
+        <p id="editorStatus" class="muted">
+            Готово за редактиране.
+        </p>
+
+    </aside>
+
+
+    <!-- WEBSITE PREVIEW -->
+
+    <main class="preview-area">
+
+        <div class="preview-toolbar">
+            <span>LIVE WEBSITE PREVIEW</span>
+
+            <div>
+                <button id="desktopView">DESKTOP</button>
+                <button id="mobileView">MOBILE</button>
+            </div>
+        </div>
+
+        <div class="preview-frame-container">
+            <iframe
+                id="websitePreview"
+                src="index.html">
+            </iframe>
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- AI ASSISTANT -->
+
+<button id="aiToggle" class="ai-toggle">
+    ✨ AI
+</button>
+
+<div id="aiPanel" class="ai-panel" hidden>
+
+    <div class="ai-header">
+        <strong>✨ TOWER AI DESIGNER</strong>
+        <button id="closeAI">✕</button>
+    </div>
+
+    <div id="aiMessages" class="ai-messages">
+        <div class="ai-message">
+            Здравей! Аз съм помощникът за дизайна на TOWER BG.
+
+            Кажи ми какво искаш да променим!
+        </div>
+    </div>
+
+    <form id="aiForm">
+        <input
+            id="aiInput"
+            placeholder="Опиши промяната..."
+            autocomplete="off"
+            required>
+
+        <button type="submit">➤</button>
+    </form>
+
+</div>
+
+<script src="designer.js"></script>
+
+</body>
+</html>
